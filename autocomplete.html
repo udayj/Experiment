@@ -1,0 +1,194 @@
+<html>
+<head>
+<script type="text/javascript">
+trie={};
+function insert(word)
+{
+  //alert("inserting "+word);
+  letters=word.split("");
+  cur=trie;
+  for(var i=0,l=letters.length;i<l;i++)
+  {
+    var letter=letters[i], pos=cur[letter];
+    if(pos==null)
+    {
+      var leaf={};
+      if(i==l-1)
+      {
+        leaf=0;
+      }
+      cur[letter]=leaf;
+      cur=cur[letter];
+    }
+    else if(pos==0)
+    {
+      if(i<l-1)
+      cur[letter]={$:0};
+      else continue;
+      cur=cur[letter];
+    }
+    else
+    {
+
+      cur=cur[letter];
+      if(i==l-1)
+      cur.$=0;
+    }
+  }
+  //alert(JSON.stringify(trie));
+}
+function find(word)
+{
+  letters=word.split("");
+  cur=trie;
+  for(var i=0,l=letters.length;i<l;i++)
+  {
+    var letter=letters[i],pos=cur[letter];
+    if(pos==null)
+    {
+      alert("not available"); return;
+    }
+    else if(pos==0)
+    {
+      if(i==l-1)
+      {alert("available"); return;}
+      else
+      {alert("not available"); return;}
+    }
+    else if(i<l-1)
+    {
+      cur=cur[letter];
+    }
+    else
+    {
+      cur=cur[letter];
+      if(cur.$!=null && cur.$==0) {alert("available"); return;}
+      else {
+      alert("not available");
+      return;
+      }
+    }
+  }
+}
+function findSuggest(word)
+{
+   letters=word.split("");
+    cur=trie;
+    for(var i=0,l=letters.length;i<l;i++)
+    {
+      var letter=letters[i],pos=cur[letter];
+      if(pos==null)
+      {
+        return {};
+      }
+      else if(pos==0)
+      {
+        if(i==l-1)
+        {
+          var arr={};
+          arr.w=word;
+          return arr;
+        }
+        else return {};
+      }
+      else if(i<l-1)
+      {
+        cur=cur[letter];
+      }
+      else
+      {
+        var arr={};
+        arr.next=cur[letter];
+        return arr;
+       // if(cur.$!=null && cur.$==0) {alert("available"); return;}
+
+      }
+  }
+}
+suggestions=[];
+boldSuggestions=[];
+max=5;
+count=0;
+function suggest(word)
+{
+  for(var i=1;i<=5;i++)
+  {
+    document.getElementById("suggest"+i).innerHTML="";
+  }
+  suggestions=[];
+  boldSuggestions=[];
+  count=0;
+  var arr=findSuggest(word);
+  if(arr.w!=null)
+  {
+    suggestions.push(word);
+    boldSuggestions.push("");
+  }
+  if(arr.next!=null)
+  {cur=arr.next;
+  makeSuggestions(cur,word,"");
+  }
+  var i=1;
+  for(var part in suggestions)
+  {
+    var suggestArea=document.getElementById("suggest"+i);
+    suggestArea.innerHTML=suggestions[part]+"<b>"+boldSuggestions[part]+"</b>";
+    i++;
+  }
+}
+function makeSuggestions(triePos,origWord,currentWord)
+{
+  if(triePos==null) return;
+  for(var node in triePos)
+  {
+    if(count>=5) return;
+    if(typeof(triePos[node])=="number")
+    {
+      if(node=="$")
+      {suggestions.push(origWord);
+       boldSuggestions.push(currentWord);
+      }
+      else
+      {
+        suggestions.push(origWord);
+        boldSuggestions.push(currentWord+node);
+      }
+      count++;
+
+      continue;
+    }
+    else if(typeof(triePos[node]) == "object")
+    {
+      makeSuggestions(triePos[node],origWord,currentWord+node);
+    }
+  }
+}
+function insertDict()
+{
+  insert("check");
+  insert("checking");
+  insert("checkers");
+  insert("cheek");
+  insert("games");
+  insert("game");
+  insert("galore");
+  insert("gaming");
+}
+</script>
+</head>
+<body onload="insertDict()">
+<input type="text" id="field" name="field" value=""/>
+<input type="button" name="butt    on" value="insert" onclick="insert(field.value)"/>
+<input type="text" id="field2" name="field2" value=""/>
+<input type="button" name="button2" value="find" onclick="find(field2.value)"/>
+<input type="text" id="field3" name="field3" value="" onKeyUp="suggest(this.value)"/>
+<input type="button" name="button3" value="suggest" onclick="suggest(field3.value)"/>
+<div id="suggestions" class="suggest" style="position:relative;left:417px">
+<div id="suggest1"></div>
+<div id="suggest2"></div>
+<div id="suggest3"></div>
+<div id="suggest4"></div>
+<div id="suggest5"></div>
+</div>
+</body>
+</html>
