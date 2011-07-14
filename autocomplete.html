@@ -1,5 +1,8 @@
 <html>
 <head>
+<title>
+Autocomplete in Javascript using Tries
+</title>
 <script type="text/javascript">
 trie={};
 function insert(word)
@@ -177,18 +180,24 @@ function insertDict()
 </script>
 </head>
 <body onload="insertDict()">
+<div>
 <input type="text" id="field" name="field" value=""/>
 <input type="button" name="butt    on" value="insert" onclick="insert(field.value)"/>
+</div>
+<div>
 <input type="text" id="field2" name="field2" value=""/>
 <input type="button" name="button2" value="find" onclick="find(field2.value)"/>
+</div>
+<div>
 <input type="text" id="field3" name="field3" value="" onKeyUp="suggest(this.value)"/>
-<input type="button" name="button3" value="suggest" onclick="suggest(field3.value)"/>
-<div id="suggestions" class="suggest" style="position:relative;left:417px">
+<input type="button" name="button3" value="autocomplete" onclick="suggest(field3.value)"/>
+<div id="suggestions" class="suggest" style="position:relative;">
 <div id="suggest1"></div>
 <div id="suggest2"></div>
 <div id="suggest3"></div>
 <div id="suggest4"></div>
 <div id="suggest5"></div>
+</div>
 </div>
 </body>
 </html>
